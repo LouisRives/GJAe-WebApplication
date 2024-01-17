@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Activities Page</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div th:insert="navbar :: navbar"></div>
+<h1>Activities Page</h1>
+
+<a th:href="@{'/course/' + ${courseId}}" style="text-decoration: none;"><button type="button">Back to current course</button></a>
+<a th:href="@{'/activities/' + ${activityId} + '/workload-statistics'}" style="text-decoration: none;"><button type="button">Workload statistics</button></a>
+
+<h2>Tasks</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Task Name</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="task : ${tasks}">
+            <td><a th:href="@{'/task/' + ${task.id}}" th:text="${task.name}"></a></td>
+            <td>
+                <form th:action="@{'/activities/' + ${activityId} + '/delete/' + ${task.id}}" method="post">
+                    <input type="hidden" name="_method" value="delete"/>
+                    <button type="submit" class="delete-button">Delete</button>
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<!-- Form to create a new task -->
+<form th:action="@{'/activities/' + ${activityId} + '/addTask'}" method="post" th:object="${newTask}">
+    <label for="taskName">Task Name:</label>
+    <input type="text" id="taskName" th:field="*{name}" required>
+
+    <label for="taskType">Task Type:</label>
+    <input type="text" id="taskType" th:field="*{type}" required>
+
+    <label for="description">Description:</label>
+    <textarea id="description" th:field="*{description}" required></textarea>
+
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate" th:field="*{startDate}" required>
+
+    <label for="endDate">End Date:</label>
+    <input type="date" id="endDate" th:field="*{endDate}" required>
+
+    <button type="submit">Add Task</button>
+</form>
+</body>
+</html>

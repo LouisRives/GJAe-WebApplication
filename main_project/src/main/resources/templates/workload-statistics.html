@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Workload statistics</title>
+    <link rel="stylesheet" href="/styles.css">
+<!--    <style>-->
+<!--        body {-->
+<!--        font-family: 'Arial', sans-serif;-->
+<!--        background-color: #f4f4f4;-->
+<!--        color: #333;-->
+<!--        margin: 20px;-->
+<!--        }-->
+
+<!--        h2 {-->
+<!--        color: #008080;-->
+<!--        }-->
+
+<!--        table {-->
+<!--        width: 100%;-->
+<!--        border-collapse: collapse;-->
+<!--        margin-top: 20px;-->
+<!--        }-->
+
+<!--        th, td {-->
+<!--        border: 1px solid #ddd;-->
+<!--        padding: 10px;-->
+<!--        text-align: left;-->
+<!--        }-->
+
+<!--        th {-->
+<!--        background-color: #008080;-->
+<!--        color: #fff;-->
+<!--        }-->
+
+<!--        tr:nth-child(even) {-->
+<!--        background-color: #f9f9f9;-->
+<!--        }-->
+
+<!--        button {-->
+<!--            background-color: #008080;-->
+<!--            color: #fff;-->
+<!--            padding: 10px 15px;-->
+<!--            border: none;-->
+<!--            border-radius: 5px;-->
+<!--            cursor: pointer;-->
+<!--        }-->
+
+<!--        button:hover {-->
+<!--            background-color: #006666;-->
+<!--        }-->
+
+<!--        a {-->
+<!--            display: inline-block;-->
+<!--            margin-top: 10px;-->
+<!--            text-decoration: none;-->
+<!--            color: #008080;-->
+<!--        }-->
+
+<!--        a:hover {-->
+<!--            text-decoration: underline;-->
+<!--        }-->
+<!--    </style>-->
+</head>
+<body>
+    <div th:insert="navbar :: navbar"></div>
+    <header>
+        <h2 th:text="'Workload statistics for ' + ${activityName}">Workload statistics for activity</h2>
+    </header>
+    <main>
+        <a th:href="@{'/course/' + ${courseId}}" style="text-decoration: none;"><button type="button">Back to current course</button></a>
+        <a th:href="@{'/activities/' + ${activityId}}" style="text-decoration: none;"><button type="button">Back to current activity</button></a>
+        <table>
+            <tr>
+                <th>User</th>
+                <th>Hours</th>
+                <th>Percentage</th>
+            </tr>
+            <tr th:each="row : ${workloadStatistics}">
+                <td th:text="${row[0]}"></td>
+                <td th:text="${row[1]}"></td>
+                <td th:text="${row[2]}"></td>
+            </tr>
+        </table>
+    </main>
+</body>
