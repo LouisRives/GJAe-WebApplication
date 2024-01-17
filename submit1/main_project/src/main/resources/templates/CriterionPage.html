@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Criterion Page</title>
+    <link rel="stylesheet" href="/styles-alt.css">
+</head>
+<body>
+<div th:insert="navbar :: navbar"></div>
+<h1>Criterion Page</h1>
+<a th:href="@{'/course/' + ${courseId}}" style="text-decoration: none;"><button type="button">Back to current course</button></a>
+<!-- Display Criteria -->
+<h2>All Criteria</h2>
+<table>
+    <tr>
+        <th>Criterion ID</th>
+        <th>Category</th>
+        <th>Criterion Name</th>
+        <th>Check Procedure</th>
+        <th>Evaluation Method</th>
+        <th>Max Points</th>
+    </tr>
+    <tr th:each="criterion : ${criteria}">
+        <td th:text="${criterion.id}"></td>
+        <td th:text="${criterion.category}"></td>
+        <td th:text="${criterion.criterionName}"></td>
+        <td th:text="${criterion.checkProcedure}"></td>
+        <td th:text="${criterion.evaluationMethod}"></td>
+        <td th:text="${criterion.maxPoints}"></td>
+        <td>
+            <form th:action="@{'/criteria/' + ${courseId} + '/delete'}" method="post">
+                <input type="hidden" name="criterionId" th:value="${criterion.id}" />
+                <button type="submit">Delete</button>
+            </form>
+            <form th:action="@{'/criteria/' + ${courseId} + '/edit/' + ${criterion.id}}" method="get">
+                <button type="submit">Edit</button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+
+<!-- Add Criterion Form -->
+<h2>Add New Criterion</h2>
+<form th:action="@{'/criteria/' + ${courseId} + '/add'}" method="post" th:object="${newCriterion}">
+
+    <label for="category">Category:</label>
+    <input type="text" id="category" th:field="*{category}" required>
+
+    <label for="criterionName">Criterion Name:</label>
+    <input type="text" id="criterionName" th:field="*{criterionName}" required>
+
+    <label for="checkProcedure">Check Procedure:</label>
+    <input type="text" id="checkProcedure" th:field="*{checkProcedure}" required>
+
+    <label for="evaluationMethod">Evaluation Method: Together</label>
+    <input type="checkbox" id="evaluationMethod" th:field="*{evaluationMethod}" th:checked="${evaluationMethod}" />
+
+
+    <label for="maxPoints">Max Points:</label>
+    <input type="number" id="maxPoints" th:field="*{maxPoints}" required>
+
+    <button type="submit">Add Criterion</button>
+</form>
+
+<!-- Add form for editing criteria -->
+<h2> Edit Criterion</h2>
+<form th:if="${editMode}" th:action="@{'/criteria/' + ${courseId} + '/edit/' + ${editedCriterion.id}}" method="post" th:object="${editedCriterion}">
+    <!-- ... (similar form code as the one for adding criteria) ... -->
+        <label for="category">Category:</label>
+        <input type="text" id="category" th:field="*{category}" required>
+
+        <label for="criterionName">Criterion Name:</label>
+        <input type="text" id="criterionName" th:field="*{criterionName}" required>
+
+        <label for="checkProcedure">Check Procedure:</label>
+        <input type="text" id="checkProcedure" th:field="*{checkProcedure}" required>
+
+        <label for="evaluationMethod">Evaluation Method: Together</label>
+    <input type="checkbox" id="evaluationMethod" th:field="*{evaluationMethod}" th:checked="${evaluationMethod}" />
+
+        <label for="maxPoints">Max Points:</label>
+        <input type="number" id="maxPoints" th:field="*{maxPoints}" required>
+    <button type="submit">Save Changes</button>
+</form>

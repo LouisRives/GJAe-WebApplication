@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Criteria Evaluation Form</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        /* Initially hide the form and button */
+        #evaluationForm {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div th:insert="navbar :: navbar"></div>
+<h1>Criteria Evaluation Form</h1>
+<a th:href="@{'/evaluations/' + ${courseId}}" style="text-decoration: none;"><button type="button">Back to current evaluation</button></a>
+<br><br>
+<!-- Dropdown for selecting team -->
+<label for="teamId">Select Team:</label>
+<select id="teamId" name="teamId" onchange="updateTeamDetails(this.value)">
+    <!-- Populate with teams from your model -->
+    <option th:each="team : ${teams}" th:value="${team.id}" th:text="${team.teamName}"></option>
+</select>
+
+<!-- Dropdown for selecting student -->
+<label for="studentId">Select Student:</label>
+<select id="studentId" name="studentId" onchange="updateStudentId(this.value)" th:readonly="${criterion.evaluationMethod}" >
+    <!-- Options will be populated dynamically based on the selected team -->
+</select>
+
+<!-- Form for evaluation (Initially hidden) -->
+<form id="evaluationForm" th:action="@{'/evaluations/' + ${courseId} + '/criteriaEvaluation'}" method="post">
+
+    <!-- Add hidden input field for teamId -->
+    <input type="hidden" id="hiddenTeamId" name="teamId" />
+    <input type="hidden" id="courseId" name="courseId" th:value="${courseId}" />
+    <!-- Add hidden input field for criterionId -->
+    <input type="hidden" id="hiddenCriterionId" name="criterionId" th:value="${criterion.id}" />
+    <input type="hidden" id="hiddenStudentId" name="studentId" />
+
+    <label for="points">Points:</label>
+    <input type="number" id="points" name="points" required
+           th:min="0" th:max="${criterion.maxPoints}"/>
+
+    <label for="feedback">Feedback:</label>
+    <textarea id="feedback" name="feedback" required></textarea>
+
+    <button type="submit">Submit</button>
+</form>
+
+<script th:inline="javascript">
+    // Trigger the function with the value of the first team when the page loads
+    document.addEventListener("DOMContentLoaded", function() {
+        var firstTeamId = document.getElementById('teamId').value;
+        updateTeamDetails(firstTeamId);
+    });
+
+
+    function updateTeamDetails(teamId) {
+        // Set the teamId in the hidden input field
+        document.getElementById('hiddenTeamId').value = teamId;
+
+        // Show the form and button
+        document.getElementById('evaluationForm').style.display = 'block';
+
+        // Fetch students for the selected team
+        fetch('/fetchStudents?teamId=' + teamId)
+            .then(response => response.json())
+            .then(students => {
+                // Update the student dropdown options
+                updateStudentDropdown(students);
+            })
+            .catch(error => console.error('Error fetching students:', error));
+    }
+
+    function updateStudentDropdown(students) {
+        var studentDropdown = document.getElementById('studentId');
+        // Clear existing options
+        studentDropdown.innerHTML = '';
+
+        // Populate dropdown with fetched students
+        students.forEach(function(student) {
+            var option = document.createElement('option');
+            option.value = student.id;
+            option.text = student.name;
+            studentDropdown.appendChild(option);
+        })
+
+        var points = document.getElementById('points');
+        var criterion = /*[[${criterion}]]*/ {};
+        points.max = criterion.evaluationMethod ? criterion.maxPoints * students.length : criterion.maxPoints;
+    }
+    function updateStudentId(studentId) {
+        // Update the hidden input field for studentId
+        document.getElementById('hiddenStudentId').value = studentId;
+    }
+
+</script>
+
+</body>
+</html>
